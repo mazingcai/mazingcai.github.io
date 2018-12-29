@@ -229,6 +229,161 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/29/Android屏幕软键盘检测调研/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mazingcai's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/12/29/Android屏幕软键盘检测调研/" itemprop="url">Android屏幕软键盘检测调研</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-29T16:29:02+08:00">
+                2018-12-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="目标：判断Android屏幕上软键盘是否处于开启状态"><a href="#目标：判断Android屏幕上软键盘是否处于开启状态" class="headerlink" title="目标：判断Android屏幕上软键盘是否处于开启状态"></a>目标：判断Android屏幕上软键盘是否处于开启状态</h2><h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><ul>
+<li>SDK和API中没有软键盘隐藏变化的相关事件，但可以通过其他方式监听软键盘显示与隐藏的状态变化</li>
+<li>最佳方式：动态计算布局</li>
+</ul>
+<h2 id="APP中隐藏软键盘的方法"><a href="#APP中隐藏软键盘的方法" class="headerlink" title="APP中隐藏软键盘的方法"></a>APP中隐藏软键盘的方法</h2><ul>
+<li>BACK键</li>
+<li>键盘自身提供隐藏的按扭</li>
+<li>用代码强制隐藏</li>
+</ul>
+<h2 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h2><h3 id="一、通过BACK键检测"><a href="#一、通过BACK键检测" class="headerlink" title="一、通过BACK键检测"></a>一、通过BACK键检测</h3><p>这属于事件(KeyEvent)，能监听到</p>
+<ul>
+<li>方法<ul>
+<li>继承EditText，并重写方法<a href="https://developer.android.com/reference/android/support/v17/leanback/widget/ImeKeyMonitor.ImeKeyListener.html" target="_blank" rel="noopener">onKeyPreIme()</a></li>
+<li>这个方法能在输入法前面拦截事件，从而可以发现BACK事件</li>
+</ul>
+</li>
+<li>缺点：BACK键仅仅是隐藏软键盘的其中一种方式，不全面</li>
+</ul>
+<h3 id="二、通过override根布局的onMeasure检测"><a href="#二、通过override根布局的onMeasure检测" class="headerlink" title="二、通过override根布局的onMeasure检测"></a>二、通过override根布局的onMeasure检测</h3><p>软键盘弹起时Activity的整体布局会变</p>
+<ul>
+<li>方法<ul>
+<li>继承Activity的根布局（比如LinearLayout或者RelativeLayout，然后重写onMeasure)方法</li>
+<li>在其中判断View的当前高度与其本应有的高度，如果当前高度小于本应有的高度，则表明软键盘在</li>
+</ul>
+</li>
+<li>缺点：软键盘弹起时，布局也可能没有变化（受其它条件的控制）</li>
+</ul>
+<h3 id="三、通过计算根布局的底部空隙检测（最佳）"><a href="#三、通过计算根布局的底部空隙检测（最佳）" class="headerlink" title="三、通过计算根布局的底部空隙检测（最佳）"></a>三、通过计算根布局的底部空隙检测（最佳）</h3><p>判断根布局的可视区域与屏幕底部的差值，如果这个差大于某个值，可以认定键盘弹起了。</p>
+<ul>
+<li>优点：适用所有情况</li>
+<li>参考代码  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setListenerToRootView</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">final</span> View rootView = getWindow().getDecorView().findViewById(android.R.id.content);  </span><br><span class="line">    rootView.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</span> ViewTreeObserver.OnGlobalLayoutListener() &#123;  </span><br><span class="line">        <span class="meta">@Override</span>  </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGlobalLayout</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">            LogUtils.d(TAG, <span class="string">"[onGlobalLayout] .. in .."</span>);  </span><br><span class="line">            <span class="keyword">boolean</span> mKeyboardUp = isKeyboardShown(rootView);  </span><br><span class="line">            <span class="keyword">if</span> (mKeyboardUp) &#123;  </span><br><span class="line">                LogUtils.d(TAG, <span class="string">"键盘弹出.."</span>);  </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">                LogUtils.d(TAG, <span class="string">"键盘收起.."</span>);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;);  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isKeyboardShown</span><span class="params">(View rootView)</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> softKeyboardHeight = <span class="number">100</span>;  </span><br><span class="line">    Rect r = <span class="keyword">new</span> Rect();  </span><br><span class="line">    rootView.getWindowVisibleDisplayFrame(r);  </span><br><span class="line">    DisplayMetrics dm = rootView.getResources().getDisplayMetrics();  </span><br><span class="line">    <span class="keyword">int</span> heightDiff = rootView.getBottom() - r.bottom;  </span><br><span class="line">    <span class="keyword">return</span> heightDiff &gt; softKeyboardHeight * dm.density;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="ref"><a href="#ref" class="headerlink" title="ref"></a>ref</h2><blockquote>
+<p><a href="http://blog.csdn.net/xiaole0313/article/details/51537809" target="_blank" rel="noopener">http://blog.csdn.net/xiaole0313/article/details/51537809</a><br><a href="http://blog.csdn.net/yanjunhui2011/article/details/52472294" target="_blank" rel="noopener">http://blog.csdn.net/yanjunhui2011/article/details/52472294</a></p>
+</blockquote>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/30/Appium 测试用例编写实践 -- 以开源bilibili客户端为例/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -390,7 +545,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
