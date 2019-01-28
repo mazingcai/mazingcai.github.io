@@ -229,6 +229,244 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/28/Android 智能手表测试/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="mazingcai's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/28/Android 智能手表测试/" itemprop="url">Android 智能手表测试</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-28T19:59:08+08:00">
+                2019-01-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ul>
+<li>测试设备：HUAWEI WATCH 2 Pro</li>
+<li>Wear APP != Phone APP</li>
+<li>手表可以自行连接wifi上网，也可以蓝牙连接手机，通过手机上网</li>
+</ul>
+<h2 id="关于-Wear-APP"><a href="#关于-Wear-APP" class="headerlink" title="关于 Wear APP"></a>关于 Wear APP</h2><ul>
+<li>使用Android Studio只允许在手机上安装Phone APP，在手表上安装Wear APP</li>
+<li>使用<code>adb install</code>可以在手表上安装Phone APP，支持插桩，正常运行，生成测试报告</li>
+<li>截图和dom dump速度较慢（一般dump需要5s）</li>
+</ul>
+<h2 id="Wear-各指标及测量方法"><a href="#Wear-各指标及测量方法" class="headerlink" title="Wear 各指标及测量方法"></a>Wear 各指标及测量方法</h2><ul>
+<li>电池信息：电量、温度<ul>
+<li>拨号盘输入*#*#4636#*#*</li>
+</ul>
+</li>
+<li>电量/power consumption：<ul>
+<li>Google提供的开源电池历史数据分析工具battery-historian</li>
+<li>Android自带adb shell dumpsys batterystats可以生成报告</li>
+<li>第三方硬件测量：High Voltage power monitor</li>
+</ul>
+</li>
+<li>温度：<ul>
+<li>电池温度</li>
+<li>CPU温度</li>
+<li>第三方软件获取：360，金山…</li>
+<li>通过读取手机传感器sensor的温度近似于手机CPU温度</li>
+<li>通过读取CPU信息来获取</li>
+</ul>
+</li>
+<li>Memory<ul>
+<li>adb shell dumpsys meminfo &lt;&gt;</li>
+<li>logcat</li>
+<li>Android Profiler</li>
+</ul>
+</li>
+<li>Network<ul>
+<li>Android Profiler</li>
+</ul>
+</li>
+<li>CPU<ul>
+<li>Android Profiler</li>
+</ul>
+</li>
+<li>Latency<ul>
+<li>Launch time</li>
+<li>update time</li>
+<li>response time</li>
+<li>ntpd可以同步多设备时间</li>
+</ul>
+</li>
+<li>GPU/FPS<ul>
+<li>adb shell dumpsys gfxinfo…</li>
+<li>systrace</li>
+<li>logcat</li>
+</ul>
+</li>
+<li>网络优化<ul>
+<li>AS自带Network Monitor: 网络请求数量及访问速率</li>
+<li>抓包工具</li>
+<li>网速也可以通过开源库编码获得</li>
+</ul>
+</li>
+<li>流量<ul>
+<li>TrafficStats类</li>
+<li>tcpdump抓包，wireshark可以读取</li>
+<li>综合使用adb shell cat /proc/uid_stat/uid/tcp_rcv和tcp_snd命令</li>
+</ul>
+</li>
+<li>loss (ping)<ul>
+<li>*#*#4636#*#*</li>
+</ul>
+</li>
+<li>Android性能测试的指标：<ul>
+<li>启动时间    </li>
+<li>内存</li>
+<li>CPU</li>
+<li>GPU</li>
+<li>功耗</li>
+<li>流量</li>
+</ul>
+</li>
+<li>其它<ul>
+<li>渲染性能</li>
+<li>disk access</li>
+<li>CPU availability</li>
+<li>QoS</li>
+<li>round trip latency</li>
+</ul>
+</li>
+</ul>
+<h2 id="定位分类"><a href="#定位分类" class="headerlink" title="定位分类"></a>定位分类</h2><ul>
+<li>商务</li>
+<li>专业运动</li>
+<li>健康</li>
+<li>儿童手表（360电话手表：远程拍照、GPS、通话）</li>
+</ul>
+<h2 id="专属传感器"><a href="#专属传感器" class="headerlink" title="专属传感器"></a>专属传感器</h2><ul>
+<li>加速度传感器</li>
+<li>光学心率传感器*</li>
+<li>GPS（轨迹记录）</li>
+<li>皮电反应传感器（测唤醒度）</li>
+<li>温度传感器（可测皮肤温度）</li>
+<li>气压传感器（气压反应海拔，爬楼梯、攀岩）</li>
+<li>电容传感器（脱腕检测）</li>
+<li>环境光传感器</li>
+<li>紫外线传感器</li>
+<li>皮电反应传感器（监测汗水水平）</li>
+</ul>
+<h2 id="相关生物特征"><a href="#相关生物特征" class="headerlink" title="相关生物特征"></a>相关生物特征</h2><ul>
+<li>睡眠</li>
+<li>心率</li>
+<li>久坐</li>
+<li>运动</li>
+<li>热量消耗</li>
+<li>血压</li>
+<li>心电</li>
+<li>血氧（登山缺氧检测、哮喘疾病检测）</li>
+<li>皮肤电性</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/29/Android屏幕软键盘检测调研/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -545,7 +783,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -586,7 +824,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
